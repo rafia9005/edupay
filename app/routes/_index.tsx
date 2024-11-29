@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { usePayment } from "../hooks/usePayment"; 
+import { usePayment } from "../hooks/usePayment";
 
 export default function Home() {
   const [nisn, setNisn] = useState("");
@@ -9,7 +9,7 @@ export default function Home() {
 
   const handleFormSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    handleSubmit(nisn); 
+    handleSubmit(nisn);
   };
 
   useEffect(() => {
@@ -22,11 +22,13 @@ export default function Home() {
 
   const handleModalClose = () => {
     setIsModalOpen(false);
-    resetData(); 
+    resetData();
   };
 
   const handleAddPayment = (months: number) => {
-    const totalAmount = months * monthlyFee;
+    const totalAmount = months * 100000;
+    console.log(`Total payment for ${months} months: Rp ${totalAmount}`);
+    handleMidtransPayment(nisn, months, totalAmount); // Call the payment function with selected months and amount
   };
 
   return (
@@ -66,10 +68,34 @@ export default function Home() {
               {message && <p className="mt-4 text-sm text-gray-500">{message}</p>}
             </div>
           </div>
+
+          {/* About Section */}
+          <div className="lg:col-span-1">
+            <h2 className="text-2xl font-bold text-gray-900">Tentang EduPay</h2>
+            <p className="mt-4 text-lg text-gray-500">
+              EduPay adalah platform pembayaran sekolah digital yang memungkinkan orang tua dan sekolah untuk melakukan pembayaran
+              bulanan secara mudah dan cepat. Dengan sistem yang aman dan efisien, EduPay mempermudah administrasi keuangan sekolah dan memberikan kenyamanan bagi orang tua.
+            </p>
+          </div>
         </div>
       </div>
 
-      {/* Modal Pop-up */}
+      {/* Overview Section */}
+      <div className="bg-gray-50 py-16">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+          <h2 className="text-3xl font-extrabold text-gray-900">Bagaimana EduPay Bekerja?</h2>
+          <p className="mt-4 text-lg text-gray-500">
+            EduPay mempermudah proses pembayaran sekolah dengan fitur-fitur berikut:
+          </p>
+          <ul className="mt-6 list-disc pl-8 text-lg text-gray-500">
+            <li>Pembayaran Bulanan: Orang tua dapat melakukan pembayaran setiap bulan sesuai dengan tagihan yang ditentukan.</li>
+            <li>Keamanan Transaksi: EduPay menggunakan teknologi enkripsi terbaru untuk memastikan transaksi yang aman dan terjamin.</li>
+            <li>Pengingat Pembayaran: EduPay akan mengingatkan orang tua mengenai pembayaran yang harus dilakukan setiap bulan.</li>
+            <li>Transaksi Cepat: Pembayaran dapat dilakukan dengan cepat dan mudah tanpa memerlukan antrian panjang.</li>
+          </ul>
+        </div>
+      </div>
+
       {isModalOpen && (
         <div className="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50 z-50">
           <div className="bg-white rounded-lg shadow-xl w-11/12 sm:w-96 p-6">
@@ -82,36 +108,32 @@ export default function Home() {
             )}
             {paymentMonths.length > 0 ? (
               <div className="mt-6">
-                <p className="text-gray-500 text-sm">
-                {message} 
-                </p>
+                <p className="text-gray-500 text-sm">{message}</p>
+                <label htmlFor="additionalMonths" className="block text-sm font-medium text-gray-700 mt-5">
+                  Tambah Pembayaran Bulan:
+                </label>
+
+                <input
+                  type="number"
+                  id="additionalMonths"
+                  value={additionalMonths}
+                  onChange={(e) => setAdditionalMonths(Number(e.target.value))}
+                  min={1}
+                  max={paymentMonths.length}
+                  className="w-full rounded-md border-gray-300 py-2 px-3 focus:border-blue-500 focus:ring-blue-500 sm:text-sm text-center"
+                />
+
                 <button
-                  onClick={() => handleMidtransPayment(nisn, months)}
-                  className="mt-6 inline-flex items-center justify-center rounded-md border border-transparent bg-green-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2"
+                  onClick={() => handleAddPayment(additionalMonths)}
+                  className="mt-4 w-full items-center justify-center rounded-md border border-transparent bg-blue-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
                 >
-                  Bayar Sekarang
+                  Bayar {additionalMonths} Bulan
                 </button>
+
               </div>
             ) : (
               <div className="mt-6">
                 <p className="text-lg text-gray-500">Semua pembayaran telah lunas!</p>
-                <div className="mt-4">
-                  <label htmlFor="additionalMonths" className="block text-sm font-medium text-gray-700">Tambah Pembayaran Bulan:</label>
-                  <input
-                    type="number"
-                    id="additionalMonths"
-                    value={additionalMonths}
-                    onChange={(e) => setAdditionalMonths(Number(e.target.value))}
-                    min={1}
-                    className="w-full rounded-md border-gray-300 py-2 px-3 focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
-                  />
-                  <button
-                    onClick={() => handleAddPayment(additionalMonths)}
-                    className="mt-4 inline-flex items-center justify-center rounded-md border border-transparent bg-blue-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-                  >
-                    Bayar {additionalMonths} Bulan
-                  </button>
-                </div>
               </div>
             )}
             <button

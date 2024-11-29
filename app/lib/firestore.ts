@@ -67,6 +67,7 @@ export async function savePembayaran(data: {
   month: string;
   year: number;
   status: string;
+  date: string
 }) {
   try {
     const pembayaranRef = collection(db, "pembayaran");
@@ -76,6 +77,33 @@ export async function savePembayaran(data: {
     console.error("Error saving payment data:", error);
   }
 }
+
+export async function checkLastPembayaran(nisn: string) {
+  try {
+    const pembayaranRef = collection(db, "pembayaran");
+
+    const q = query(
+      pembayaranRef,
+      where("nisn", "==", nisn),
+      orderBy("year", "desc"),
+      orderBy("month", "desc"),
+      limit(1)
+    );
+
+    const querySnapshot = await getDocs(q);
+
+    if (querySnapshot.empty) {
+      throw new Error("No payments found for this student.");
+    }
+
+    const lastPayment = querySnapshot.docs[0].data();
+    return lastPayment;
+  } catch (error) {
+    console.error("Error checking last payment:", error);
+    throw new Error("Failed to check last payment. Please try again.");
+  }
+}
+
 
 // Get the last payment made by the student
 export async function getLastPayment(nisn: string) {
@@ -107,31 +135,3 @@ export async function getLastPayment(nisn: string) {
     throw new Error("Failed to fetch last payment. Please try again.");
   }
 }
-
-// Check the last payment made by the student
-export async function checkLastPembayaran(nisn: string) {
-  try {
-    const pembayaranRef = collection(db, "pembayaran");
-
-    const q = query(
-      pembayaranRef,
-      where("nisn", "==", nisn),
-      orderBy("year", "desc"),
-      orderBy("month", "desc"),
-      limit(1)
-    );
-
-    const querySnapshot = await getDocs(q);
-
-    if (querySnapshot.empty) {
-      throw new Error("No payments found for this student.");
-    }
-
-    const lastPayment = querySnapshot.docs[0].data();
-    return lastPayment;
-  } catch (error) {
-    console.error("Error checking last payment:", error);
-    throw new Error("Failed to check last payment. Please try again.");
-  }
-}
-
