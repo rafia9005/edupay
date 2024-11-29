@@ -1,0 +1,15 @@
+version: '3'
+
+services:
+  vite-remix-app:
+    container_name: vite-remix-app
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "5173:5173"
+    volumes:
+      - ./:/app
+    environment:
+      NODE_ENV: production
+    restart: always
