@@ -1,5 +1,14 @@
 import { useState, useEffect } from "react";
 import { usePayment } from "../hooks/usePayment";
+import { MetaFunction } from "@remix-run/react";
+
+export const meta: MetaFunction = () => {
+  return [
+    { title: "EduPay - SMKN 6 Malang - Layanan Pembayaran Sekolah Digital" },
+    { name: "description", content: "EduPay adalah platform pembayaran digital resmi untuk SMKN 6 Malang. Mudahkan proses pembayaran SPP, uang kegiatan, dan layanan lainnya dengan transaksi yang aman, cepat, dan efisien." },
+  ];
+};
+
 
 export default function Home() {
   const [nisn, setNisn] = useState("");

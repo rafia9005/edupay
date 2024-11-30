@@ -62,19 +62,23 @@ export async function checkPembayaran(nisn: string, month: string, year: number)
 }
 
 // Save payment data to Firestore
+
 export async function savePembayaran(data: {
   nisn: string;
   month: string;
   year: number;
   status: string;
-  date: string
+  date: string;
 }) {
   try {
+    console.log("Attempting to save data:", data);
     const pembayaranRef = collection(db, "pembayaran");
     await addDoc(pembayaranRef, data);
-    console.log("Payment data saved successfully.");
   } catch (error) {
-    console.error("Error saving payment data:", error);
+    if (error) {
+      console.error("Firestore Error Code:", error);
+    }
+    console.error("Error saving payment data:", error || error);
   }
 }
 

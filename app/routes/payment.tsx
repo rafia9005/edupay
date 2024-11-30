@@ -26,7 +26,7 @@ export default function Payment() {
 
           if (!hasSavedPayment.current) {
             const nisn = localStorage.getItem("nisn")?.toString();
-            const month = localStorage.getItem("totalMonths")
+            const month = localStorage.getItem("totalMonths")?.toString() || "";
             const pembayaran = {
               nisn: nisn ? nisn.toString() : "0",  // Ensure nisn is a string
               month,
@@ -50,7 +50,7 @@ export default function Payment() {
       checkStatus();
     }
   }, [order_id]);
-  
+
   if (!paymentDetails) {
     return (
       <div className="flex justify-center items-center min-h-screen bg-gray-100">
