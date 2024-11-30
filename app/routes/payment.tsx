@@ -26,9 +26,10 @@ export default function Payment() {
 
           if (!hasSavedPayment.current) {
             const nisn = localStorage.getItem("nisn")?.toString();
+            const month = localStorage.getItem("totalMonths")
             const pembayaran = {
               nisn: nisn ? nisn.toString() : "0",  // Ensure nisn is a string
-              month: currentMonth,
+              month,
               year: currentYear,
               status: response.data.transaction_status,
               date: new Date().toISOString(),  // Convert Date to ISO string format

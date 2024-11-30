@@ -3,7 +3,7 @@ import { usePayment } from "../hooks/usePayment";
 
 export default function Home() {
   const [nisn, setNisn] = useState("");
-  const { siswa, message, paymentMonths, handleSubmit, handleMidtransPayment, resetData, months } = usePayment();
+  const { siswa, message, paymentMonths, handleSubmit, handleMidtransPayment, resetData } = usePayment();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [additionalMonths, setAdditionalMonths] = useState(1);
 
@@ -26,9 +26,10 @@ export default function Home() {
   };
 
   const handleAddPayment = (months: number) => {
-    const totalAmount = months * 100000;
-    console.log(`Total payment for ${months} months: Rp ${totalAmount}`);
-    handleMidtransPayment(nisn, months, totalAmount); // Call the payment function with selected months and amount
+    const totalPrice = months * 100000;
+    const totalTax = 2500 * months;
+    const totalAmount = totalPrice + totalTax;
+    handleMidtransPayment(nisn, months, totalAmount);
   };
 
   return (
@@ -134,6 +135,22 @@ export default function Home() {
             ) : (
               <div className="mt-6">
                 <p className="text-lg text-gray-500">Semua pembayaran telah lunas!</p>
+                <input
+                  type="number"
+                  id="additionalMonths"
+                  value={additionalMonths}
+                  onChange={(e) => setAdditionalMonths(Number(e.target.value))}
+                  min={1}
+                  max={paymentMonths.length}
+                  className="w-full rounded-md border-gray-300 py-2 px-3 focus:border-blue-500 focus:ring-blue-500 sm:text-sm text-center"
+                />
+
+                <button
+                  onClick={() => handleAddPayment(additionalMonths)}
+                  className="mt-4 w-full items-center justify-center rounded-md border border-transparent bg-blue-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                >
+                  Bayar {additionalMonths} Bulan
+                </button>
               </div>
             )}
             <button
