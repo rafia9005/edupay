@@ -43,6 +43,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
         />
         <meta name="twitter:image" content="https://edu-pay.vercel.app/logo.jpg" />
         <link rel="icon" href="/logo.jpg" type="image/x-icon" />
+        <meta name="google-site-verification" content="mQypZDiKjPRkmETJBcDSUx3cRhnFcdQaD616a2sL3Dc" />
         <Links />
       </head>
       <body>
