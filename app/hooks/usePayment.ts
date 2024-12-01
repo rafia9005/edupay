@@ -68,11 +68,12 @@ const calculateTotalPrice = (overdueCount: number, basePrice: number) => {
   return basePrice * overdueCount + tax;
 };
 
-
-
-
 const handleSubmit = async (nisn: string) => {
   const siswaData = ListSiswa.find((s) => s.nisn === nisn);
+  if(!siswaData) {
+    setMessage("NISN siswa tidak berhasil di temukan!")
+    return;
+  }
   if (siswaData) {
     setSiswa(siswaData);
 

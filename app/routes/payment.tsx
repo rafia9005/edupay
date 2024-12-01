@@ -19,11 +19,9 @@ export default function Payment() {
     const checkStatus = async () => {
       try {
         const response = await axios.get(`https://edu-api-flax.vercel.app/api/payment/status?order_id=${order_id}`);
-
         if (response.data.status_code === "200") {
           setPaymentDetails(response.data);
           console.log(response.data);
-
           if (!hasSavedPayment.current) {
             const nisn = localStorage.getItem("nisn")?.toString();
             const month = localStorage.getItem("totalMonths")?.toString() || "";
