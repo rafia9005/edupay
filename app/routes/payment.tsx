@@ -35,6 +35,7 @@ export default function Payment() {
 
             savePembayaran(pembayaran);
             hasSavedPayment.current = true;
+            localStorage.removeItem("totalMonths");
           }
         } else {
           console.error("Payment not found");
