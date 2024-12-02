@@ -92,6 +92,7 @@ const handleSubmit = async (nisn: string) => {
           overdueMonths = monthList.slice(0, currentDate.getMonth() + 1);
           overdueCount = overdueMonths.length;
         }
+        localStorage.removeItem("totalMonths")
 
         const basePrice = 100000;
         const totalPrice = calculateTotalPrice(overdueCount, basePrice); // Ensure this uses the correct logic for tax
