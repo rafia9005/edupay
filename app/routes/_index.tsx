@@ -49,6 +49,18 @@ export default function Home() {
     handleMidtransPayment(nisn, months, totalAmount);
   };
 
+  const handleIncreaseMonths = () => {
+    if (additionalMonths < paymentMonths.length) {
+      setAdditionalMonths(additionalMonths + 1);
+    }
+  };
+
+  const handleDecreaseMonths = () => {
+    if (additionalMonths > 1) {
+      setAdditionalMonths(additionalMonths - 1);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-gray-100">
       {/* Hero Section */}
@@ -193,24 +205,34 @@ export default function Home() {
                         <p className="mt-6 block text-sm font-medium text-gray-700">
                           {message}
                         </p>
+
                         <label htmlFor="additionalMonths" className="mt-6 block text-sm font-medium text-gray-700">
                           Tambah Pembayaran Bulan
                         </label>
-                        <input
-                          type="number"
-                          id="additionalMonths"
-                          value={additionalMonths}
-                          onChange={(e) => setAdditionalMonths(Number(e.target.value))}
-                          min={1}
-                          max={paymentMonths.length}
-                          className="mt-1 w-full rounded-lg border border-gray-300 bg-gray-50 p-3 text-center shadow-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500"
-                        />
+
+                        <div className="flex items-center justify-center mt-2">
+                          <button
+                            onClick={() => handleDecreaseMonths()}
+                            className="w-10 h-10 flex justify-center items-center bg-gray-200 rounded-full text-xl text-gray-700 hover:bg-gray-300"
+                          >
+                            -
+                          </button>
+                          <span className="mx-4 text-lg font-semibold text-gray-800">{additionalMonths}</span>
+                          <button
+                            onClick={() => handleIncreaseMonths()}
+                            className="w-10 h-10 flex justify-center items-center bg-gray-200 rounded-full text-xl text-gray-700 hover:bg-gray-300"
+                          >
+                            +
+                          </button>
+                        </div>
+
                         <button
                           onClick={() => handleAddPayment(additionalMonths)}
                           className="mt-4 w-full rounded-lg bg-blue-600 px-4 py-3 text-sm font-medium text-white transition-transform hover:scale-105"
                         >
                           Bayar {additionalMonths} Bulan
                         </button>
+
                       </>
                     )}
                   </>
