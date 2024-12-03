@@ -160,11 +160,23 @@ export default function Home() {
             <h2 className="text-xl font-bold text-gray-900">Detail Siswa</h2>
             {siswa ? (
               <>
-
-                {paymentMonths.length == 0 ? (
-                  <div className="mt-6">
-                    <label htmlFor="additionalMonths" className="block text-sm font-medium text-gray-700 mt-5">
-                      Tambah Pembayaran Bulan:
+                {message == "Pembayaran sudah lunas." ? (
+                  <>
+                  <h1>Pembayaran sampai bulan ini lunas.</h1>
+                  </>
+                ) : (
+                  <>
+                    <p className="mt-4 text-gray-700">
+                      <strong>Nama:</strong> {siswa.nama}
+                    </p>
+                    <p className="mt-2 text-gray-700">
+                      <strong>Kelas:</strong> {siswa.kelas}
+                    </p>
+                    <p className="mt-6 block text-sm font-medium text-gray-700">
+                      {message}
+                    </p>
+                    <label htmlFor="additionalMonths" className="mt-6 block text-sm font-medium text-gray-700">
+                      Tambah Pembayaran Bulan
                     </label>
                     <input
                       type="number"
@@ -172,22 +184,17 @@ export default function Home() {
                       value={additionalMonths}
                       onChange={(e) => setAdditionalMonths(Number(e.target.value))}
                       min={1}
-                      max={12 - paymentMonths.length}
-                      className="w-full rounded-md border-gray-300 py-2 px-3 focus:border-blue-500 focus:ring-blue-500 sm:text-sm text-center"
+                      max={paymentMonths.length}
+                      className="mt-1 w-full rounded-lg border border-gray-300 bg-gray-50 p-3 text-center shadow-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500"
                     />
                     <button
                       onClick={() => handleAddPayment(additionalMonths)}
-                      className="mt-4 w-full items-center justify-center rounded-md border border-transparent bg-blue-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                      className="mt-4 w-full rounded-lg bg-blue-600 px-4 py-3 text-sm font-medium text-white transition-transform hover:scale-105"
                     >
                       Bayar {additionalMonths} Bulan
                     </button>
-                  </div>
-                ) : (
-                  <div className="mt-6">
-                    <p className="text-lg text-gray-500">Pembayaran telah selesai untuk semua bulan!</p>
-                  </div>
+                  </>
                 )}
-
               </>
             ) : (
               <p className="mt-4 text-gray-700">Tidak ada data siswa yang ditemukan.</p>

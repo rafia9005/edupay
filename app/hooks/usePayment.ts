@@ -21,7 +21,7 @@ const monthList = [
 
 export const usePayment = () => {
   const [message, setMessage] = useState<string>("");
-  const [paymentMonths, setPaymentMonths] = useState<string[]>([]);
+  const [paymentMonths, setPaymentMonths] = useState<any>([]);
   const [siswa, setSiswa] = useState<any>(null);
   const [months, setMonths] = useState<any>(null);
 
@@ -68,33 +68,42 @@ const calculateTotalPrice = (overdueCount: number, basePrice: number) => {
   return basePrice * overdueCount + tax;
 };
 
+
 const handleSubmit = async (nisn: string) => {
   const siswaData = ListSiswa.find((s) => s.nisn === nisn);
-  if(!siswaData) {
-    setMessage("NISN siswa tidak berhasil di temukan!")
+  if (!siswaData) {
+    setMessage("NISN siswa tidak berhasil ditemukan!");
     return;
   }
-  if (siswaData) {
-    setSiswa(siswaData);
 
-    const payments = await checkPembayaran(nisn, currentMonth, currentYear);
-    if (payments.length > 0) {
-      setMessage("Pembayaran bulan ini sudah dilakukan.");
-    } else {
-      try {
-        const lastPayment = await getLastPayment(nisn);
-        let overdueMonths;
-        let overdueCount;
-        if (lastPayment) {
-          overdueMonths = calculateOverdueMonths(lastPayment);
-          overdueCount = overdueMonths.length;
-        } else {
-          overdueMonths = monthList.slice(0, currentDate.getMonth() + 1);
-          overdueCount = overdueMonths.length;
-        }
+  setSiswa(siswaData);
 
+  // Cek apakah pembayaran bulan ini sudah dilakukan
+  const payments = await checkPembayaran(nisn, currentMonth, currentYear);
+  if (payments.length > 0) {
+    setMessage("Pembayaran bulan ini sudah dilakukan.");
+  } else {
+    try {
+      const lastPayment = await getLastPayment(nisn);
+      let overdueMonths: string[] = [];
+      let overdueCount: number = 0;
+
+      if (lastPayment) {
+        overdueMonths = calculateOverdueMonths(lastPayment);
+        overdueCount = overdueMonths.length;
+        setPaymentMonths(overdueCount)
+        console.log(overdueCount)
+      } else {
+        overdueMonths = monthList.slice(0, currentDate.getMonth() + 1); // Semua bulan hingga bulan ini
+        overdueCount = overdueMonths.length;
+      }
+
+      // Mengecek apakah semua bulan sudah dibayar hingga bulan saat ini
+      if (overdueCount === 0) {
+        setMessage("Pembayaran sudah lunas.");
+      } else {
         const basePrice = 100000;
-        const totalPrice = calculateTotalPrice(overdueCount, basePrice); // Ensure this uses the correct logic for tax
+        const totalPrice = calculateTotalPrice(overdueCount, basePrice); // Perhitungan total dengan pajak
 
         setPaymentMonths(overdueMonths);
         setMessage(
@@ -102,24 +111,13 @@ const handleSubmit = async (nisn: string) => {
             ", "
           )}. Total yang harus dibayar: Rp ${totalPrice}`
         );
-      } catch (error) {
-        console.error("Error getting last payment:", error);
-        setMessage(
-          "Terjadi kesalahan saat mengambil data pembayaran terakhir."
-        );
       }
+    } catch (error) {
+      console.error("Error getting last payment:", error);
+      setMessage(
+        "Terjadi kesalahan saat mengambil data pembayaran terakhir."
+      );
     }
-  } else {
-    const overdueMonths = monthList.slice(0, currentDate.getMonth() + 1);
-    const overdueCount = overdueMonths.length;
-    const basePrice = 100000;
-    const totalPrice = calculateTotalPrice(overdueCount, basePrice);
-    setPaymentMonths(overdueMonths);
-    setMessage(
-      `${overdueCount} bulan belum dibayar: ${overdueMonths.join(
-        ", "
-      )}. Total yang harus dibayar: Rp ${totalPrice}`
-    );
   }
 };
 
