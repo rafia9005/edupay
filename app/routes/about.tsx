@@ -26,17 +26,17 @@ export default function About() {
 
           </div>
         </div>
-        <div className="flex items-center bg-gray-100 p-4 rounded-lg mt-2">
-          <img
-            src="/arfan.jpg"
-            alt="Developer"
-            className="w-24 h-24 rounded-full mr-4"
-          />
-          <div>
-            <h3 className="text-xl font-bold text-gray-800">Arfan Restu Rachmadhani</h3>
-            <p className="text-gray-600">Front End Developer</p>
-            <div className="flex space-x-4 mt-2">
-            </div>
+      </div>
+      <div className="flex items-center bg-gray-100 p-4 rounded-lg mt-2">
+        <img
+          src="/arfan.jpg"
+          alt="Developer"
+          className="w-24 h-24 rounded-full mr-4"
+        />
+        <div>
+          <h3 className="text-xl font-bold text-gray-800">Arfan Restu Rachmadhani</h3>
+          <p className="text-gray-600">Front End Developer</p>
+          <div className="flex space-x-4 mt-2">
           </div>
         </div>
       </div>
