@@ -160,47 +160,39 @@ export default function Home() {
             <h2 className="text-xl font-bold text-gray-900">Detail Siswa</h2>
             {siswa ? (
               <>
-                <p className="mt-4 text-gray-700">
-                  <strong>Nama:</strong> {siswa.nama}
-                </p>
-                <p className="mt-2 text-gray-700">
-                  <strong>Kelas:</strong> {siswa.kelas}
-                </p>
-                <p className="mt-6 block text-sm font-medium text-gray-700">
-                  {message}
-                </p>
 
-                <label className="mt-6 block text-sm font-medium text-gray-700">
-                  Tambah Pembayaran Bulan
-                </label>
-                <div className="mt-1 flex items-center justify-center space-x-4">
-                  <button
-                    type="button"
-                    onClick={() => setAdditionalMonths((prev) => Math.max(prev - 1, 1))}
-                    className="rounded-lg bg-gray-200 px-3 py-2 text-gray-700 hover:bg-gray-300"
-                  >
-                    -
-                  </button>
-                  <span className="text-lg font-semibold">{additionalMonths}</span>
-                  <button
-                    type="button"
-                    onClick={() => setAdditionalMonths((prev) => Math.min(prev + 1, paymentMonths.length))}
-                    className="rounded-lg bg-gray-200 px-3 py-2 text-gray-700 hover:bg-gray-300"
-                  >
-                    +
-                  </button>
-                </div>
-                <button
-                  onClick={() => handleAddPayment(additionalMonths)}
-                  className="mt-4 w-full rounded-lg bg-blue-600 px-4 py-3 text-sm font-medium text-white transition-transform hover:scale-105"
-                >
-                  Bayar {additionalMonths} Bulan
-                </button>
+                {paymentMonths.length == 0 ? (
+                  <div className="mt-6">
+                    <label htmlFor="additionalMonths" className="block text-sm font-medium text-gray-700 mt-5">
+                      Tambah Pembayaran Bulan:
+                    </label>
+                    <input
+                      type="number"
+                      id="additionalMonths"
+                      value={additionalMonths}
+                      onChange={(e) => setAdditionalMonths(Number(e.target.value))}
+                      min={1}
+                      max={12 - paymentMonths.length}
+                      className="w-full rounded-md border-gray-300 py-2 px-3 focus:border-blue-500 focus:ring-blue-500 sm:text-sm text-center"
+                    />
+                    <button
+                      onClick={() => handleAddPayment(additionalMonths)}
+                      className="mt-4 w-full items-center justify-center rounded-md border border-transparent bg-blue-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                    >
+                      Bayar {additionalMonths} Bulan
+                    </button>
+                  </div>
+                ) : (
+                  <div className="mt-6">
+                    <p className="text-lg text-gray-500">Pembayaran telah selesai untuk semua bulan!</p>
+                  </div>
+                )}
 
               </>
             ) : (
               <p className="mt-4 text-gray-700">Tidak ada data siswa yang ditemukan.</p>
             )}
+
             <button
               onClick={handleModalClose}
               className="mt-6 w-full rounded-lg bg-gray-200 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-300"

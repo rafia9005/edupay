@@ -179,6 +179,7 @@ const handleSubmit = async (nisn: string) => {
 
       const overdueMonths = monthsToPayArray[monthsToPay - 1];
       localStorage.setItem("totalMonths", overdueMonths);
+      console.log(overdueMonths)
     } else {
       overdueMonths = monthList.slice(0, monthsToPay);
       overdueCount = overdueMonths.length;
@@ -188,6 +189,7 @@ const handleSubmit = async (nisn: string) => {
 
       const selectedMonth = overdueMonths[monthsToPayCount - 1]; // Get the last month based on monthsToPayCount
       localStorage.setItem("totalMonths", selectedMonth); // Save the selected month as a string in localStorage
+      console.log(overdueMonths)
     }
 
     console.log("Overdue count:", overdueCount);
