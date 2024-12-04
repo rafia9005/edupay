@@ -95,7 +95,7 @@ export const usePayment = () => {
           setMessage(
             `${overdueCount} bulan belum dibayar: ${overdueMonths.join(
               ", "
-            )}. Total yang harus dibayar: Rp ${totalPrice}`
+            )}.`
           );
         }
       } catch (error) {
