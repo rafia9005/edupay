@@ -190,7 +190,7 @@ export default function Home() {
                 <h2 className="text-xl font-bold text-gray-900">Detail Siswa</h2>
                 {siswa ? (
                   <>
-                    {message == "Pembayaran sudah lunas." ? (
+                    {message == "Pembayaran bulan ini sudah dilakukan." ? (
                       <>
                         <h1>Pembayaran bulan ini sudah lunas.</h1>
                       </>
