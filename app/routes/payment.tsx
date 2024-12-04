@@ -95,9 +95,11 @@ export default function Payment() {
     <div className="bg-gray-50 min-h-screen py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-lg mx-auto bg-white p-8 rounded-xl shadow-xl space-y-8">
         {/* Logo */}
-        <div className="flex justify-center mb-6">
-          <img src="/logo.jpg" alt="Logo" className="w-[200px] object-contain" />
-        </div>
+        <a href="/">
+          <div className="flex justify-center mb-6">
+            <img src="/logo.jpg" alt="Logo" className="w-[200px] object-contain" />
+          </div>
+        </a>
 
         {/* Header */}
         <h1 className="text-3xl font-semibold text-center text-blue-600 mb-6">Payment Receipt</h1>
