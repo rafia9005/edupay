@@ -43,10 +43,11 @@ export default function Home() {
   };
 
   const handleAddPayment = (months: number) => {
-    const totalPrice = months * 100000;
+    const totalPrice = additionalMonths * 100000;
     const totalTax = 2500 * months;
     const totalAmount = totalPrice + totalTax;
-    handleMidtransPayment(nisn, months, totalAmount);
+    handleMidtransPayment(nisn, additionalMonths, totalAmount);
+    //console.log(additionalMonths)
   };
 
   const handleIncreaseMonths = () => {
