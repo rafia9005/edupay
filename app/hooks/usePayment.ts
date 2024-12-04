@@ -29,97 +29,83 @@ export const usePayment = () => {
   const currentMonth = monthList[currentDate.getMonth()];
   const currentYear = currentDate.getFullYear();
 
-  // Utility function to calculate overdue months
-  const calculateOverdueMonths = (lastPayment: any) => {
-    const overdueMonths: string[] = [];
-    if (!lastPayment) {
-      for (let i = 0; i < currentDate.getMonth(); i++) {
-        overdueMonths.push(monthList[i]);
-      }
-      return overdueMonths;
-    }
+  const calculateOverdueMonths = (lastPayment: { month: string }) => {
+    const lastPaidMonthIndex = monthList.indexOf(lastPayment.month);
+    const currentMonthIndex = currentDate.getMonth();
 
-    const lastPaidMonth = lastPayment.month;
-    const lastPaidYear = lastPayment.year;
-    let monthIndex = monthList.indexOf(lastPaidMonth);
-    monthIndex = (monthIndex + 1) % 12;
-
-    while (
-      (lastPaidYear === currentYear && monthIndex < currentDate.getMonth()) ||
-      lastPaidYear < currentYear
-    ) {
-      overdueMonths.push(monthList[monthIndex]);
-      monthIndex = (monthIndex + 1) % 12;
+    // Jika terakhir dibayar sebelum Desember, tambahkan sisa bulan
+    const overdueMonths = [];
+    for (let i = lastPaidMonthIndex + 1; i <= currentMonthIndex; i++) {
+      overdueMonths.push(monthList[i % 12]);
     }
 
     return overdueMonths;
   };
 
+  const calculateTax = (overdueCount: number) => {
+    return overdueCount > 5 ? (overdueCount - 5) * 2500 : 0;
+  };
 
+  // Calculate total price considering overdue count and base price
+  const calculateTotalPrice = (overdueCount: number, basePrice: number) => {
+    const tax = calculateTax(overdueCount);
+    // Apply the tax to the total price, ensuring it's added correctly
+    return basePrice * overdueCount + tax;
+  };
 
-const calculateTax = (overdueCount: number) => {
-  return overdueCount > 5 ? (overdueCount - 5) * 2500 : 0;
-};
+  const handleSubmit = async (nisn: string) => {
+    const siswaData = ListSiswa.find((s) => s.nisn === nisn);
+    if (!siswaData) {
+      setMessage("NISN siswa tidak berhasil ditemukan!");
+      return;
+    }
 
-// Calculate total price considering overdue count and base price
-const calculateTotalPrice = (overdueCount: number, basePrice: number) => {
-  const tax = calculateTax(overdueCount);
-  // Apply the tax to the total price, ensuring it's added correctly
-  return basePrice * overdueCount + tax;
-};
+    setSiswa(siswaData);
 
+    const payments = await checkPembayaran(nisn, currentMonth, currentYear);
+    if (payments.length > 0) {
+      setMessage("Pembayaran bulan ini sudah dilakukan.");
+    } else {
+      try {
+        const lastPayment = await getLastPayment(nisn);
+        let overdueMonths: string[] = [];
+        let overdueCount: number = 0;
 
-const handleSubmit = async (nisn: string) => {
-  const siswaData = ListSiswa.find((s) => s.nisn === nisn);
-  if (!siswaData) {
-    setMessage("NISN siswa tidak berhasil ditemukan!");
-    return;
-  }
+        if (lastPayment) {
+          overdueMonths = calculateOverdueMonths(lastPayment);
+          overdueCount = overdueMonths.length;
+        } else {
+          overdueMonths = monthList.slice(0, currentDate.getMonth() + 1);
+          overdueCount = overdueMonths.length;
 
-  setSiswa(siswaData);
+          // Pastikan "Desember" disertakan jika perlu
+          if (!overdueMonths.includes("Desember")) {
+            overdueMonths.push("Desember");
+            overdueCount++;
+          }
+        }
 
-  // Cek apakah pembayaran bulan ini sudah dilakukan
-  const payments = await checkPembayaran(nisn, currentMonth, currentYear);
-  if (payments.length > 0) {
-    setMessage("Pembayaran bulan ini sudah dilakukan.");
-  } else {
-    try {
-      const lastPayment = await getLastPayment(nisn);
-      let overdueMonths: string[] = [];
-      let overdueCount: number = 0;
+        if (overdueCount === 0) {
+          setMessage("Pembayaran sudah lunas.");
+        } else {
+          const basePrice = 100000;
+          const totalPrice = calculateTotalPrice(overdueCount, basePrice);
 
-      if (lastPayment) {
-        overdueMonths = calculateOverdueMonths(lastPayment);
-        overdueCount = overdueMonths.length;
-        setPaymentMonths(overdueCount)
-        console.log(overdueCount)
-      } else {
-        overdueMonths = monthList.slice(0, currentDate.getMonth() + 1); // Semua bulan hingga bulan ini
-        overdueCount = overdueMonths.length;
-      }
-
-      // Mengecek apakah semua bulan sudah dibayar hingga bulan saat ini
-      if (overdueCount === 0) {
-        setMessage("Pembayaran sudah lunas.");
-      } else {
-        const basePrice = 100000;
-        const totalPrice = calculateTotalPrice(overdueCount, basePrice); // Perhitungan total dengan pajak
-
-        setPaymentMonths(overdueMonths);
+          setPaymentMonths(overdueMonths);
+          setMessage(
+            `${overdueCount} bulan belum dibayar: ${overdueMonths.join(
+              ", "
+            )}. Total yang harus dibayar: Rp ${totalPrice}`
+          );
+        }
+      } catch (error) {
+        console.error("Error getting last payment:", error);
         setMessage(
-          `${overdueCount} bulan belum dibayar: ${overdueMonths.join(
-            ", "
-          )}. Total yang harus dibayar: Rp ${totalPrice}`
+          "Terjadi kesalahan saat mengambil data pembayaran terakhir."
         );
       }
-    } catch (error) {
-      console.error("Error getting last payment:", error);
-      setMessage(
-        "Terjadi kesalahan saat mengambil data pembayaran terakhir."
-      );
     }
-  }
-};
+  };
 
   const handleMidtransPayment = async (
     nisn: string,
@@ -128,7 +114,7 @@ const handleSubmit = async (nisn: string) => {
   ) => {
     const paymentId = uuidv4();
     try {
-      localStorage.removeItem("totalMonths")
+      localStorage.removeItem("totalMonths");
 
       const totalPrice = totalMonths;
 
@@ -147,7 +133,7 @@ const handleSubmit = async (nisn: string) => {
       checkMonth(nisn, monthsToPay);
       const { token } = response.data;
       if (token) {
-        window.location.href = `https://app.sandbox.midtrans.com/snap/v2/vtweb/${token}`;
+        //window.location.href = `https://app.sandbox.midtrans.com/snap/v2/vtweb/${token}`;
       } else {
         console.error("Failed to get token from server");
         setMessage("Failed to initiate payment.");
@@ -177,17 +163,13 @@ const handleSubmit = async (nisn: string) => {
 
       const overdueMonths = monthsToPayArray[monthsToPay - 1];
       localStorage.setItem("totalMonths", overdueMonths);
-      console.log(overdueMonths)
+      console.log(overdueMonths);
     } else {
-      overdueMonths = monthList.slice(0, monthsToPay);
-      overdueCount = overdueMonths.length;
-
-      overdueMonths = overdueMonths.slice(0, -1);
-      console.log("Overdue months after slicing:", overdueMonths);
-
-      const selectedMonth = overdueMonths[monthsToPayCount - 1]; // Get the last month based on monthsToPayCount
-      localStorage.setItem("totalMonths", selectedMonth); // Save the selected month as a string in localStorage
-      console.log(overdueMonths)
+      const overdueMonths = monthList.slice(0, monthsToPay); // Ambil bulan sesuai monthsToPay
+      const selectedMonth = overdueMonths[monthsToPayCount - 1]; // Ambil bulan terakhir
+      localStorage.setItem("totalMonths", selectedMonth);
+      console.log("Selected month:", selectedMonth);
+      console.log(selectedMonth);
     }
 
     console.log("Overdue count:", overdueCount);

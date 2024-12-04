@@ -47,8 +47,7 @@ export default function Home() {
     const totalTax = 2500 * months;
     const totalAmount = totalPrice + totalTax;
     handleMidtransPayment(nisn, additionalMonths, totalAmount);
-    //console.log(additionalMonths)
-  };
+  } ;
 
   const handleIncreaseMonths = () => {
     if (additionalMonths < paymentMonths.length) {
