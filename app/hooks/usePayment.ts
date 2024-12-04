@@ -133,7 +133,7 @@ export const usePayment = () => {
       checkMonth(nisn, monthsToPay);
       const { token } = response.data;
       if (token) {
-        //window.location.href = `https://app.sandbox.midtrans.com/snap/v2/vtweb/${token}`;
+        window.location.href = `https://app.sandbox.midtrans.com/snap/v2/vtweb/${token}`;
       } else {
         console.error("Failed to get token from server");
         setMessage("Failed to initiate payment.");
